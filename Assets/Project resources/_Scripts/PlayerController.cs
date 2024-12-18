@@ -17,7 +17,7 @@ namespace AirHockey
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetKey(KeyCode.Mouse0) && IsOwner)
             {
                 Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
                 if (_plane.Raycast(ray, out float dis))
