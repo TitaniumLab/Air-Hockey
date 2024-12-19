@@ -1,5 +1,6 @@
 using Unity.Netcode.Components;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace AirHockey
 {
@@ -9,9 +10,22 @@ namespace AirHockey
         private Plane _plane = new Plane(Vector3.up, 0);
 
 
+
         protected override void Awake()
         {
             base.Awake();
+            SceneManager.sceneLoaded += SetCamera;
+            _camera = Camera.main;
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            SceneManager.sceneLoaded -= SetCamera;
+        }
+
+        private void SetCamera(Scene scene, LoadSceneMode mod)
+        {
             _camera = Camera.main;
         }
 

@@ -42,7 +42,7 @@ namespace AirHockey
             }
         }
 
-        private async void OnClientConnectedCallback(ulong clientId)
+        private void OnClientConnectedCallback(ulong clientId)
         {
             //if (_networkManager.LocalClientId == clientId)
             //{
@@ -59,6 +59,7 @@ namespace AirHockey
                 _networkManager.SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
                 //_networkManager.SceneManager.scene
             }
+
         }
 
 
@@ -82,16 +83,6 @@ namespace AirHockey
                 }.WithDistributedAuthorityNetwork();
 
                 _session = await MultiplayerService.Instance.MatchmakeSessionAsync(quickJoinOprions, options);
-                //session.PlayerJoined += (string playerId) => { Debug.Log(playerId); };
-
-                ////Debug.Log("Session started");
-                //while (session.AvailableSlots != 0)
-                //{
-                //    await Task.Yield();
-                //}
-
-                ////while (session.)
-                //_networkManager.SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
                 _connectionState = ConnectionState.Connected;
             }
             catch (Exception e)
