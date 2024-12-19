@@ -1239,11 +1239,11 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1702214229}
-    PlayerPrefab: {fileID: 5819320346679085238, guid: 99d9b343039797841bf55dc757d66e2e, type: 3}
+    PlayerPrefab: {fileID: 0}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: 14a476184178bd34a8e5707624ae2b65, type: 2}
-    TickRate: 30
+    TickRate: 50
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
     ConnectionData: 
@@ -1260,7 +1260,7 @@ MonoBehaviour:
     EnableNetworkLogs: 1
     NetworkTopology: 1
     UseCMBService: 0
-    AutoSpawnPlayerPrefabClientSide: 1
+    AutoSpawnPlayerPrefabClientSide: 0
     NetworkProfilingMetrics: 1
     OldPrefabList: []
   RunInBackground: 1

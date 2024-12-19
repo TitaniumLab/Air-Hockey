@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using Unity.Services.Authentication;
@@ -15,6 +16,7 @@ namespace AirHockey
         private NetworkManager _networkManager;
         private ConnectionState _connectionState;
         private string _profileName;
+        private ISession _session;
         [SerializeField] private TMP_InputField _inputField;
 
         private enum ConnectionState
@@ -27,30 +29,38 @@ namespace AirHockey
         private async void Awake()
         {
             _networkManager = GetComponent<NetworkManager>();
+            _networkManager.OnClientConnectedCallback += OnClientConnectedCallback;
+            _networkManager.OnSessionOwnerPromoted += OnSessionOwnerPromoted;
             await UnityServices.InitializeAsync();
         }
 
+        private void OnSessionOwnerPromoted(ulong sessionOwnerPromoted)
+        {
+            if (_networkManager.LocalClient.IsSessionOwner)
+            {
+                Debug.Log($"Client-{_networkManager.LocalClientId} is the session owner!");
+            }
+        }
 
-        //private void OnGUI()
-        //{
-        //    if (_connectionState == ConnectionState.Connected)
-        //        return;
+        private async void OnClientConnectedCallback(ulong clientId)
+        {
+            //if (_networkManager.LocalClientId == clientId)
+            //{
+            //    Debug.Log($"Client-{clientId} is connected and can spawn {nameof(NetworkObject)}s.");
+            //}
 
-        //    GUI.enabled = _connectionState != ConnectionState.Connecting;
+            if (_session.AvailableSlots == 0 && _networkManager.LocalClient.IsSessionOwner)
+            {
+                //_networkManager.SceneManager.OnLoadComplete += ;
+                //_networkManager.SceneManager.OnLoadComplete += () =>
+                //{
+                //    Debug.Log(handler.ToString());
+                //};
+                _networkManager.SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
+                //_networkManager.SceneManager.scene
+            }
+        }
 
-        //    using (new GUILayout.HorizontalScope(GUILayout.Width(250)))
-        //    {
-        //        GUILayout.Label("Profile Name", GUILayout.Width(100));
-        //        _profileName = GUILayout.TextField(_profileName);
-        //    }
-
-        //    GUI.enabled = GUI.enabled && !string.IsNullOrEmpty(_profileName);/*&& !string.IsNullOrEmpty(_sessionName);*/
-
-        //    if (GUILayout.Button("Create or Join Session"))
-        //    {
-        //        CreateOrJoinSessionAsync();
-        //    }
-        //}
 
         public async void CreateOrJoinSessionAsync()
         {
@@ -62,7 +72,7 @@ namespace AirHockey
                 var quickJoinOprions = new QuickJoinOptions()
                 {
                     CreateSession = true,
-                    Timeout = TimeSpan.FromSeconds(5)
+                    Timeout = TimeSpan.FromSeconds(1)
                 };
 
                 var options = new SessionOptions()
@@ -71,8 +81,17 @@ namespace AirHockey
                     Type = "Session",
                 }.WithDistributedAuthorityNetwork();
 
-                var session = await MultiplayerService.Instance.MatchmakeSessionAsync(quickJoinOprions, options);
-                SceneManager.LoadScene(1);
+                _session = await MultiplayerService.Instance.MatchmakeSessionAsync(quickJoinOprions, options);
+                //session.PlayerJoined += (string playerId) => { Debug.Log(playerId); };
+
+                ////Debug.Log("Session started");
+                //while (session.AvailableSlots != 0)
+                //{
+                //    await Task.Yield();
+                //}
+
+                ////while (session.)
+                //_networkManager.SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
                 _connectionState = ConnectionState.Connected;
             }
             catch (Exception e)
