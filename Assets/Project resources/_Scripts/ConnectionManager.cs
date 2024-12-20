@@ -14,17 +14,10 @@ namespace AirHockey
     public class ConnectionManager : MonoBehaviour
     {
         private NetworkManager _networkManager;
-        private ConnectionState _connectionState;
         private string _profileName;
         private ISession _session;
         [SerializeField] private TMP_InputField _inputField;
 
-        private enum ConnectionState
-        {
-            Disconnected,
-            Connecting,
-            Connected,
-        }
 
         private async void Awake()
         {
@@ -44,28 +37,15 @@ namespace AirHockey
 
         private void OnClientConnectedCallback(ulong clientId)
         {
-            //if (_networkManager.LocalClientId == clientId)
-            //{
-            //    Debug.Log($"Client-{clientId} is connected and can spawn {nameof(NetworkObject)}s.");
-            //}
-
             if (_session.AvailableSlots == 0 && _networkManager.LocalClient.IsSessionOwner)
             {
-                //_networkManager.SceneManager.OnLoadComplete += ;
-                //_networkManager.SceneManager.OnLoadComplete += () =>
-                //{
-                //    Debug.Log(handler.ToString());
-                //};
                 _networkManager.SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
-                //_networkManager.SceneManager.scene
             }
-
         }
 
 
         public async void CreateOrJoinSessionAsync()
         {
-            _connectionState = ConnectionState.Connecting;
             try
             {
                 AuthenticationService.Instance.SwitchProfile(_inputField.text);
@@ -83,11 +63,9 @@ namespace AirHockey
                 }.WithDistributedAuthorityNetwork();
 
                 _session = await MultiplayerService.Instance.MatchmakeSessionAsync(quickJoinOprions, options);
-                _connectionState = ConnectionState.Connected;
             }
             catch (Exception e)
             {
-                _connectionState = ConnectionState.Disconnected;
                 Debug.LogException(e);
             }
         }

@@ -1,43 +1,79 @@
-using Unity.Netcode.Components;
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 namespace AirHockey
 {
-    public class PlayerController : NetworkTransform
+    public class PlayerController : NetworkBehaviour
     {
-        private Camera _camera;
+        [SerializeField] private Rigidbody _playerPrefab;
+        private float _moveSpeed = 1.0f;
+        private float _minDis = 0.1f;
+        private Rigidbody _rb;
+        private bool _isMoving;
         private Plane _plane = new Plane(Vector3.up, 0);
 
-
-
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
-            SceneManager.sceneLoaded += SetCamera;
-            _camera = Camera.main;
+            DistributionOfPlayers.OnMatchStart += SpawnPlayerPrefab;
         }
+
 
         public override void OnDestroy()
         {
             base.OnDestroy();
-            SceneManager.sceneLoaded -= SetCamera;
-        }
-
-        private void SetCamera(Scene scene, LoadSceneMode mod)
-        {
-            _camera = Camera.main;
+            DistributionOfPlayers.OnMatchStart -= SpawnPlayerPrefab;
         }
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.Mouse0) && IsOwner)
+            // IsOwner prevents small glitch when movement button pressed
+            if (_isMoving)
             {
-                Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-                if (_plane.Raycast(ray, out float dis))
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Using Camera.main coz of scene transitions bug
+                _plane.Raycast(ray, out float dis);
+                var direction = ray.GetPoint(dis) - _rb.transform.position;
+                if (direction.magnitude > _minDis)
                 {
-                    transform.position = ray.GetPoint(dis);
+                    _rb.linearVelocity = direction.normalized * _moveSpeed;
                 }
+                else
+                {
+                    _rb.linearVelocity = Vector3.zero;
+                }
+            }
+        }
+
+
+        private void SpawnPlayerPrefab(Vector3 position)
+        {
+            _rb = Instantiate(_playerPrefab, position, Quaternion.identity, transform);
+            var netObj = _rb.GetComponent<NetworkObject>();
+            netObj.Spawn();
+        }
+
+
+        //private void SetPlayer(Scene scene, LoadSceneMode mod)
+        //{
+        //    if (scene.name == "SampleScene")
+        //    {
+        //        var playerIndex = (int)NetworkManager.LocalClientId - 1;
+        //        //Camera.SetupCurrent(DistributionOfPlayers.Instance.GetPlayerCamera(playerIndex));
+        //        _rb = DistributionOfPlayers.Instance.GetPlayerRigidbody(playerIndex);
+        //    }
+
+        //}
+
+        public void OnMove(InputAction.CallbackContext context)
+        {
+            if (context.started)
+            {
+                _isMoving = true;
+            }
+            else if (context.canceled)
+            {
+                _isMoving = false;
+                _rb.linearVelocity = Vector3.zero;
             }
         }
     }
