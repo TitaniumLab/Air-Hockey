@@ -13,9 +13,12 @@ namespace AirHockey
         private bool _isMoving;
         private Plane _plane = new Plane(Vector3.up, 0);
 
+
+
         private void Awake()
         {
             DistributionOfPlayers.OnMatchStart += SpawnPlayerPrefab;
+            Debug.Log(NetworkManager.LocalClientId);
         }
 
 
@@ -52,17 +55,6 @@ namespace AirHockey
             netObj.Spawn();
         }
 
-
-        //private void SetPlayer(Scene scene, LoadSceneMode mod)
-        //{
-        //    if (scene.name == "SampleScene")
-        //    {
-        //        var playerIndex = (int)NetworkManager.LocalClientId - 1;
-        //        //Camera.SetupCurrent(DistributionOfPlayers.Instance.GetPlayerCamera(playerIndex));
-        //        _rb = DistributionOfPlayers.Instance.GetPlayerRigidbody(playerIndex);
-        //    }
-
-        //}
 
         public void OnMove(InputAction.CallbackContext context)
         {

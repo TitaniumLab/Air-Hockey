@@ -21,7 +21,7 @@ namespace AirHockey
                 Debug.Log(_spawnPoss[NetworkManager.LocalClientId - 1]);
                 OnMatchStart?.Invoke(_spawnPoss[NetworkManager.LocalClientId - 1].position);
             }
-
+            NetworkManager.
         }
 
 
