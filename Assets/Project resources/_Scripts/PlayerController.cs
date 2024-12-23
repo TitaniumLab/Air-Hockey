@@ -1,37 +1,29 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 namespace AirHockey
 {
     public class PlayerController : NetworkBehaviour
     {
-        [SerializeField] private Rigidbody _playerPrefab;
-        private float _moveSpeed = 1.0f;
+        private float _moveSpeed = 10.0f;
         private float _minDis = 0.1f;
         private Rigidbody _rb;
         private bool _isMoving;
         private Plane _plane = new Plane(Vector3.up, 0);
 
 
-
         private void Awake()
         {
-            DistributionOfPlayers.OnMatchStart += SpawnPlayerPrefab;
-            Debug.Log(NetworkManager.LocalClientId);
+            _rb = GetComponent<Rigidbody>();
         }
 
-
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            DistributionOfPlayers.OnMatchStart -= SpawnPlayerPrefab;
-        }
 
         private void Update()
         {
             // IsOwner prevents small glitch when movement button pressed
-            if (_isMoving)
+            if (_isMoving && IsOwner)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Using Camera.main coz of scene transitions bug
                 _plane.Raycast(ray, out float dis);
@@ -45,14 +37,6 @@ namespace AirHockey
                     _rb.linearVelocity = Vector3.zero;
                 }
             }
-        }
-
-
-        private void SpawnPlayerPrefab(Vector3 position)
-        {
-            _rb = Instantiate(_playerPrefab, position, Quaternion.identity, transform);
-            var netObj = _rb.GetComponent<NetworkObject>();
-            netObj.Spawn();
         }
 
 

@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -6,36 +6,36 @@ namespace AirHockey
 {
     public class DistributionOfPlayers : NetworkBehaviour
     {
-        //[SerializeField] private Camera[] _cameras;
+        [SerializeField] private Camera[] _cameras;
         [SerializeField] private Transform[] _spawnPoss;
-        public static event Action<Vector3> OnMatchStart;
+        public static DistributionOfPlayers Instance;
 
         private void Awake()
         {
+            Instance = this;
         }
 
-        private void Start()
+        public override void OnDestroy()
         {
-            if (IsOwner)
-            {
-                Debug.Log(_spawnPoss[NetworkManager.LocalClientId - 1]);
-                OnMatchStart?.Invoke(_spawnPoss[NetworkManager.LocalClientId - 1].position);
-            }
-            NetworkManager.
+            base.OnDestroy();
+            Instance = null;
         }
 
 
 
-        //public Camera GetPlayerCamera(int playerIndex)
-        //{
-        //    for (int i = 0; i < _cameras.Length; i++)
-        //    {
-        //        if (i != playerIndex)
-        //        {
-        //            _cameras[i].gameObject.SetActive(false);
-        //        }
-        //    }
-        //    return _cameras[playerIndex];
-        //}
+        public void SetCamera(int playerIndex)
+        {
+            int index = (int)NetworkManager.Singleton.LocalClientId - 1;
+            foreach (var cam in _cameras.Except(new[] { _cameras[index] }))
+            {
+                cam.gameObject.SetActive(false);
+            }
+
+        }
+
+        public Vector3 GetSpawnPosition(int playerIndex)
+        {
+            return _spawnPoss[playerIndex].position;
+        }
     }
 }

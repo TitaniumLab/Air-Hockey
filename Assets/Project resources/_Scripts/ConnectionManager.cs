@@ -1,27 +1,27 @@
 using System;
-using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Multiplayer;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace AirHockey
 {
     [RequireComponent(typeof(NetworkManager))]
-    public class ConnectionManager : MonoBehaviour
+    public class ConnectionManager : MonoBehaviour, IMatchmake
     {
         private NetworkManager _networkManager;
         private string _profileName;
         private ISession _session;
         [SerializeField] private TMP_InputField _inputField;
 
+        public event Action OnMatchFound;
 
         private async void Awake()
         {
             _networkManager = GetComponent<NetworkManager>();
+            _networkManager.NetworkConfig.UseCMBService = true;
             _networkManager.OnClientConnectedCallback += OnClientConnectedCallback;
             _networkManager.OnSessionOwnerPromoted += OnSessionOwnerPromoted;
             await UnityServices.InitializeAsync();
@@ -37,9 +37,11 @@ namespace AirHockey
 
         private void OnClientConnectedCallback(ulong clientId)
         {
-            if (_session.AvailableSlots == 0 && _networkManager.LocalClient.IsSessionOwner)
+            // For some reason OnClientConnectedCallback is called by the session owner for each player in the session
+            // LocalClientId prevents this
+            if (_session.AvailableSlots == 0 && _networkManager.LocalClientId == clientId)
             {
-                _networkManager.SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
+                OnMatchFound?.Invoke();
             }
         }
 
