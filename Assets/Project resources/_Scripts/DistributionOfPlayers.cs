@@ -8,11 +8,13 @@ namespace AirHockey
     {
         [SerializeField] private Camera[] _cameras;
         [SerializeField] private Transform[] _spawnPoss;
+        [SerializeField] private NetworkObject _puckPrefab;
         public static DistributionOfPlayers Instance;
 
         private void Awake()
         {
             Instance = this;
+            NetworkManager.SceneManager.OnSceneEvent += OnSceneLoad;
         }
 
         public override void OnDestroy()
@@ -21,6 +23,15 @@ namespace AirHockey
             Instance = null;
         }
 
+
+        private void OnSceneLoad(SceneEvent sceneEvent)
+        {
+            if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete &&
+                NetworkManager.LocalClient.IsSessionOwner)
+            {
+                Instantiate(_puckPrefab).Spawn();
+            }
+        }
 
 
         public void SetCamera(int playerIndex)
