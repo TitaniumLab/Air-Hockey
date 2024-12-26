@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 4087534322805749883}
   - component: {fileID: 4383655082525757798}
   - component: {fileID: -2520154659592537123}
-  - component: {fileID: -315908433453948117}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -152,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2258028381
+  GlobalObjectIdHash: 3682876443
   InScenePlacedSourceGlobalObjectIdHash: 2258028381
   DeferredDespawnTick: 0
   Ownership: 2
@@ -218,16 +217,3 @@ MonoBehaviour:
   UseRigidBodyForMotion: 1
   AutoUpdateKinematicState: 0
   AutoSetKinematicOnDespawn: 1
---- !u!114 &-315908433453948117
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2843937535303551487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e04d3c1c8fc7cf4c80a1e5b5c286003, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1

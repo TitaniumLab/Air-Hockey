@@ -7,15 +7,15 @@ namespace AirHockey
     public class DistributionOfPlayers : NetworkBehaviour
     {
         [SerializeField] private Camera[] _cameras;
-        [SerializeField] private Transform[] _spawnPoss;
-        [SerializeField] private NetworkObject _puckPrefab;
+        [SerializeField] private MalletController[] _mallets;
         public static DistributionOfPlayers Instance;
 
         private void Awake()
         {
             Instance = this;
-            NetworkManager.SceneManager.OnSceneEvent += OnSceneLoad;
+            //NetworkManager.SceneManager.OnSceneEvent += OnSceneLoad;
         }
+
 
         public override void OnDestroy()
         {
@@ -24,29 +24,18 @@ namespace AirHockey
         }
 
 
-        private void OnSceneLoad(SceneEvent sceneEvent)
+        public void SetCamera(ulong playerId)
         {
-            if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete &&
-                NetworkManager.LocalClient.IsSessionOwner)
-            {
-                Instantiate(_puckPrefab).Spawn();
-            }
-        }
-
-
-        public void SetCamera(int playerIndex)
-        {
-            int index = (int)NetworkManager.Singleton.LocalClientId - 1;
-            foreach (var cam in _cameras.Except(new[] { _cameras[index] }))
+            foreach (var cam in _cameras.Except(new[] { _cameras[playerId - 1] }))
             {
                 cam.gameObject.SetActive(false);
             }
-
         }
 
-        public Vector3 GetSpawnPosition(int playerIndex)
+
+        public IMovable GetMovable(ulong playerId)
         {
-            return _spawnPoss[playerIndex].position;
+            return _mallets[playerId - 1];
         }
     }
 }

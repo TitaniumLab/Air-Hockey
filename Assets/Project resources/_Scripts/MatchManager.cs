@@ -11,7 +11,7 @@ namespace AirHockey
         private IMatchmake _matchmake;
         private NetworkManager _networkManager;
         [SerializeField] private string _arenaSceneName;
-        [SerializeField] private GameObject _playerPrefab;
+        [SerializeField] private NetworkObject _playerControllerPrefab;
 
         private void Awake()
         {
@@ -39,22 +39,12 @@ namespace AirHockey
         {
             if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete)
             {
-
-                int index = (int)NetworkManager.Singleton.LocalClientId - 1;
-                DistributionOfPlayers.Instance.SetCamera(index);
-                var pos = DistributionOfPlayers.Instance.GetSpawnPosition(index);
-                SpawnPlayer(pos);
+                var id = NetworkManager.Singleton.LocalClientId;
+                DistributionOfPlayers.Instance.SetCamera(id);
+                Instantiate(_playerControllerPrefab).Spawn();
                 Debug.Log("All members loaded to scene.");
                 _networkManager.SceneManager.OnSceneEvent -= OnArenaLoad;
             }
-        }
-
-
-        private void SpawnPlayer(Vector3 position)
-        {
-            var obj = Instantiate(_playerPrefab, position, Quaternion.identity);
-            var netObj = obj.GetComponent<NetworkObject>();
-            netObj.Spawn(true);
         }
     }
 }

@@ -1,42 +1,38 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 
 namespace AirHockey
 {
     public class PlayerController : NetworkBehaviour
     {
-        private float _moveSpeed = 10.0f;
-        private float _minDis = 0.1f;
-        private Rigidbody _rb;
+        private IMovable _movable;
         private bool _isMoving;
         private Plane _plane = new Plane(Vector3.up, 0);
 
 
-        private void Awake()
+        private void Start()
         {
-            _rb = GetComponent<Rigidbody>();
+            _movable = DistributionOfPlayers.Instance.GetMovable(OwnerClientId);
+            DisableOtherRpc();
         }
 
 
         private void Update()
         {
-            // IsOwner prevents small glitch when movement button pressed
-            if (_isMoving && IsOwner)
+            if (_isMoving)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Using Camera.main coz of scene transitions bug
                 _plane.Raycast(ray, out float dis);
-                var direction = ray.GetPoint(dis) - _rb.transform.position;
-                if (direction.magnitude > _minDis)
-                {
-                    _rb.linearVelocity = direction.normalized * _moveSpeed;
-                }
-                else
-                {
-                    _rb.linearVelocity = Vector3.zero;
-                }
+                var point = ray.GetPoint(dis);
+                _movable.MoveToRpc(point);
             }
+        }
+
+        [Rpc(SendTo.NotMe)]
+        private void DisableOtherRpc()
+        {
+            gameObject.SetActive(false);
         }
 
 
@@ -49,7 +45,6 @@ namespace AirHockey
             else if (context.canceled)
             {
                 _isMoving = false;
-                _rb.linearVelocity = Vector3.zero;
             }
         }
     }
