@@ -14,14 +14,26 @@ namespace AirHockey
         private void Awake()
         {
             Instance = this;
-            //var netobj = Instantiate(_networkObject);
-            //_mallets[0] = netobj.GetComponent<MalletController>();
-            ////netobj.Spawn();
-            //var netobj2 = Instantiate(_networkObject);
-            //_mallets[1] = netobj2.GetComponent<MalletController>();
-            //netobj2.Spawn();
+            //if (IsSessionOwner)
+            //{
+            //    var netobj = Instantiate(_networkObject);
+            //    _mallets[0] = netobj.GetComponent<MalletController>();
+            //    netobj.Spawn();
+            //    var netobj2 = Instantiate(_networkObject);
+            //    _mallets[1] = netobj2.GetComponent<MalletController>();
+            //    netobj2.Spawn();
+            //}
 
             //NetworkManager.SceneManager.OnSceneEvent += OnSceneLoad;
+        }
+
+
+        [Rpc(SendTo.Owner)]
+        public IMovable SpawnMovable(ulong playerId)
+        {
+            var netobj = Instantiate(_networkObject);
+            _mallets[0] = netobj.GetComponent<MalletController>();
+            netobj.Spawn();
         }
 
 
@@ -41,9 +53,9 @@ namespace AirHockey
         }
 
 
-        public IMovable GetMovable(ulong playerId)
-        {
-            return _mallets[playerId - 1];
-        }
+        //public IMovable GetMovable(ulong playerId)
+        //{
+        //    return _mallets[playerId - 1];
+        //}
     }
 }

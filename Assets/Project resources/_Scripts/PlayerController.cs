@@ -14,7 +14,7 @@ namespace AirHockey
         private void Start()
         {
             _movable = DistributionOfPlayers.Instance.GetMovable(OwnerClientId);
-            DisableOtherRpc();
+            //DisableOtherRpc();
         }
 
 

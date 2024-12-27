@@ -11,12 +11,14 @@ namespace AirHockey
         private float _moveSpeed = 10.0f;
         private float _minDis = 0.1f;
 
+
         private void Awake()
         {
+            //Debug.LogWarning(OwnerClientId);
             _rb = GetComponent<Rigidbody>();
         }
 
-        [Rpc(SendTo.Everyone)]
+        [Rpc(SendTo.Owner)]
         public void MoveToRpc(Vector3 point)
         {
             var direction = point - transform.position;
