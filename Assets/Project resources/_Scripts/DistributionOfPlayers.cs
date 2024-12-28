@@ -8,7 +8,7 @@ namespace AirHockey
     {
         [SerializeField] private Camera[] _cameras;
         [SerializeField] private NetworkObject _networkObject;
-        [SerializeField] private MalletController[] _mallets;
+        [SerializeField] private NetworkVariable<MalletController>[] _mallets;
         public static DistributionOfPlayers Instance;
 
         private void Awake()
@@ -29,10 +29,10 @@ namespace AirHockey
 
 
         [Rpc(SendTo.Owner)]
-        public IMovable SpawnMovable(ulong playerId)
+        public void SpawnMovableRpc(ulong playerId)
         {
             var netobj = Instantiate(_networkObject);
-            _mallets[0] = netobj.GetComponent<MalletController>();
+            _mallets[playerId - 1].Value = netobj.GetComponent<MalletController>();
             netobj.Spawn();
         }
 
@@ -52,10 +52,9 @@ namespace AirHockey
             }
         }
 
-
-        //public IMovable GetMovable(ulong playerId)
-        //{
-        //    return _mallets[playerId - 1];
-        //}
+        public IMovable GetMovable(ulong playerId)
+        {
+            return _mallets[playerId - 1].Value;
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace AirHockey
         private Plane _plane = new Plane(Vector3.up, 0);
 
 
+
         private void Start()
         {
             _movable = DistributionOfPlayers.Instance.GetMovable(OwnerClientId);
