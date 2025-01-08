@@ -41,8 +41,8 @@ namespace AirHockey
             {
                 var id = NetworkManager.Singleton.LocalClientId;
                 DistributionOfPlayers.Instance.SetCamera(id);
-                DistributionOfPlayers.Instance.SpawnMovableRpc(id);
-                Instantiate(_playerControllerPrefab).Spawn();
+                //DistributionOfPlayers.Instance.SpawnMovableRpc(id);
+                Instantiate(_playerControllerPrefab).SpawnAsPlayerObject(id);
 
                 Debug.Log("All members loaded to scene.");
                 _networkManager.SceneManager.OnSceneEvent -= OnArenaLoad;

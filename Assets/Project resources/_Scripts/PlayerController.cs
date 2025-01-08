@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -6,16 +7,47 @@ namespace AirHockey
 {
     public class PlayerController : NetworkBehaviour
     {
+        [SerializeField] private NetworkObject _malletPrefab;
         private IMovable _movable;
         private bool _isMoving;
         private Plane _plane = new Plane(Vector3.up, 0);
+        private PlayerInput _playerInput;
 
+        private void Awake()
+        {
+            _playerInput = GetComponent<PlayerInput>();
+            _playerInput.enabled = false;
+        }
+
+
+        public override void OnNetworkSpawn()
+        {
+            _playerInput.enabled = IsOwner;
+
+            base.OnNetworkSpawn();
+        }
 
 
         private void Start()
         {
-            _movable = DistributionOfPlayers.Instance.GetMovable(OwnerClientId);
-            //DisableOtherRpc();
+            if (IsOwner)
+            {
+                var sessionOwner = NetworkManager.CurrentSessionOwner;
+                var netObj = Instantiate(_malletPrefab);
+                netObj.Spawn(); 
+                _movable = netObj.GetComponent<IMovable>();
+                if (sessionOwner != OwnerClientId)
+                {
+                    netObj.ChangeOwnership(sessionOwner); // In distributed authority SpawnWithOwnership(sessionOwner) throw exception
+                }
+            }
+        }
+
+
+        public override void OnNetworkDespawn()
+        {
+            _playerInput.enabled = false;
+            base.OnNetworkDespawn();
         }
 
 
@@ -28,12 +60,6 @@ namespace AirHockey
                 var point = ray.GetPoint(dis);
                 _movable.MoveToRpc(point);
             }
-        }
-
-        [Rpc(SendTo.NotMe)]
-        private void DisableOtherRpc()
-        {
-            gameObject.SetActive(false);
         }
 
 

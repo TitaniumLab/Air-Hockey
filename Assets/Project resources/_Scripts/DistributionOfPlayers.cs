@@ -7,34 +7,33 @@ namespace AirHockey
     public class DistributionOfPlayers : NetworkBehaviour
     {
         [SerializeField] private Camera[] _cameras;
-        [SerializeField] private NetworkObject _networkObject;
-        [SerializeField] private NetworkVariable<MalletController>[] _mallets;
+        //[SerializeField] private NetworkObject _networkObject;
+        private MalletController[] _mallets = new MalletController[2];
         public static DistributionOfPlayers Instance;
 
         private void Awake()
         {
             Instance = this;
-            //if (IsSessionOwner)
-            //{
-            //    var netobj = Instantiate(_networkObject);
-            //    _mallets[0] = netobj.GetComponent<MalletController>();
-            //    netobj.Spawn();
-            //    var netobj2 = Instantiate(_networkObject);
-            //    _mallets[1] = netobj2.GetComponent<MalletController>();
-            //    netobj2.Spawn();
-            //}
-
-            //NetworkManager.SceneManager.OnSceneEvent += OnSceneLoad;
         }
 
 
-        [Rpc(SendTo.Owner)]
-        public void SpawnMovableRpc(ulong playerId)
+        public override void OnNetworkSpawn()
         {
-            var netobj = Instantiate(_networkObject);
-            _mallets[playerId - 1].Value = netobj.GetComponent<MalletController>();
-            netobj.Spawn();
+            base.OnNetworkSpawn();
         }
+
+
+        //public IMovable SpawnMovable(ulong playerId)
+        //{
+        //    if (IsSessionOwner)
+        //    {
+        //        var netobj = Instantiate(_networkObject);
+        //        _mallets[playerId - 1] = netobj.GetComponent<MalletController>();
+        //        netobj.Spawn();
+        //        return netobj.GetComponent<MalletController>();
+        //    }
+        //    return _mallets[playerId - 1];
+        //}
 
 
         public override void OnDestroy()
@@ -50,11 +49,6 @@ namespace AirHockey
             {
                 cam.gameObject.SetActive(false);
             }
-        }
-
-        public IMovable GetMovable(ulong playerId)
-        {
-            return _mallets[playerId - 1].Value;
         }
     }
 }

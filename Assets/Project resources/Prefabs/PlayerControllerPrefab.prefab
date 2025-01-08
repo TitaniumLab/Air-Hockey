@@ -118,3 +118,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  _malletPrefab: {fileID: 5959474916011143980, guid: edc5c94e247a90c46ba8e913d7bd7db1, type: 3}
