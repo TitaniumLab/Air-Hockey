@@ -20,6 +20,11 @@ namespace AirHockey
             _matchmake.OnMatchFound += LoadGameArena;
         }
 
+        private void Start()
+        {
+
+        }
+
         private void OnDestroy()
         {
             _matchmake.OnMatchFound -= LoadGameArena;
@@ -37,13 +42,11 @@ namespace AirHockey
 
         private void OnArenaLoad(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType == SceneEventType.SynchronizeComplete)
+            if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted)
             {
-                var id = NetworkManager.Singleton.LocalClientId;
+                var id = _networkManager.LocalClientId;
                 DistributionOfPlayers.Instance.SetCamera(id);
-                //DistributionOfPlayers.Instance.SpawnMovableRpc(id);
                 Instantiate(_playerControllerPrefab).SpawnAsPlayerObject(id);
-
                 Debug.Log("All members loaded to scene.");
                 _networkManager.SceneManager.OnSceneEvent -= OnArenaLoad;
             }

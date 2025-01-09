@@ -34,7 +34,7 @@ namespace AirHockey
             {
                 var sessionOwner = NetworkManager.CurrentSessionOwner;
                 var netObj = Instantiate(_malletPrefab);
-                netObj.Spawn(); 
+                netObj.Spawn();
                 _movable = netObj.GetComponent<IMovable>();
                 if (sessionOwner != OwnerClientId)
                 {

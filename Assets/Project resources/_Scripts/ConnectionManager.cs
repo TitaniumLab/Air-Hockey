@@ -12,7 +12,6 @@ namespace AirHockey
     public class ConnectionManager : MonoBehaviour, IMatchmake
     {
         private NetworkManager _networkManager;
-        private string _profileName;
         private ISession _session;
         [SerializeField] private TMP_InputField _inputField;
 
@@ -31,15 +30,14 @@ namespace AirHockey
         {
             if (_networkManager.LocalClient.IsSessionOwner)
             {
-                Debug.Log($"Client-{_networkManager.LocalClientId} is the session owner!");
+                Debug.Log($"Client-{_networkManager.LocalClientId} is the session owner.");
             }
         }
 
         private void OnClientConnectedCallback(ulong clientId)
         {
-            // For some reason OnClientConnectedCallback is called by the session owner for each player in the session
-            // LocalClientId prevents this
-            if (_session.AvailableSlots == 0 && _networkManager.LocalClientId == clientId)
+            Debug.Log($"Client-{clientId} connected.");
+            if (_session.MaxPlayers == (int)clientId)
             {
                 OnMatchFound?.Invoke();
             }
