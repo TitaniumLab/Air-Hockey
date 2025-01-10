@@ -1,5 +1,4 @@
 using System;
-using TMPro;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -13,7 +12,6 @@ namespace AirHockey
     {
         private NetworkManager _networkManager;
         private ISession _session;
-        [SerializeField] private TMP_InputField _inputField;
 
         public event Action OnMatchFound;
 
@@ -25,6 +23,17 @@ namespace AirHockey
             _networkManager.OnSessionOwnerPromoted += OnSessionOwnerPromoted;
             await UnityServices.InitializeAsync();
         }
+
+
+        private void OnDestroy()
+        {
+            if (AuthenticationService.Instance.IsSignedIn)
+            {
+                AuthenticationService.Instance.SignOut();
+                Debug.Log("Signed out successfully.");
+            }
+        }
+
 
         private void OnSessionOwnerPromoted(ulong sessionOwnerPromoted)
         {
@@ -48,8 +57,12 @@ namespace AirHockey
         {
             try
             {
-                AuthenticationService.Instance.SwitchProfile(_inputField.text);
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                if (!AuthenticationService.Instance.IsSignedIn)
+                {
+                    Debug.Log("SignIn started.");
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                    Debug.Log("SignedIn successfully.");
+                }
                 var quickJoinOprions = new QuickJoinOptions()
                 {
                     CreateSession = true,

@@ -13,6 +13,7 @@ namespace AirHockey
         [SerializeField] private string _arenaSceneName;
         [SerializeField] private NetworkObject _playerControllerPrefab;
 
+
         private void Awake()
         {
             _matchmake = GetComponent<IMatchmake>();
@@ -20,10 +21,6 @@ namespace AirHockey
             _matchmake.OnMatchFound += LoadGameArena;
         }
 
-        private void Start()
-        {
-
-        }
 
         private void OnDestroy()
         {
@@ -39,6 +36,7 @@ namespace AirHockey
                 _networkManager.SceneManager.LoadScene(_arenaSceneName, LoadSceneMode.Single);
             }
         }
+
 
         private void OnArenaLoad(SceneEvent sceneEvent)
         {
