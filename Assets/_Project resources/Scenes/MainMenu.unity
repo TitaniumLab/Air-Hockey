@@ -657,7 +657,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 1800822661}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -722,7 +722,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a6e1760012aa6e4aa8f78ab8566a869, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputField: {fileID: 0}
+  _maxPlayers: 2
 --- !u!114 &1702214230
 MonoBehaviour:
   m_ObjectHideFlags: 0

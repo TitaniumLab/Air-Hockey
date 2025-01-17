@@ -10,6 +10,7 @@ namespace AirHockey
     [RequireComponent(typeof(NetworkManager))]
     public class ConnectionManager : MonoBehaviour, IMatchmake
     {
+        [SerializeField] private int _maxPlayers = 2;
         private NetworkManager _networkManager;
         private ISession _session;
 
@@ -71,7 +72,7 @@ namespace AirHockey
 
                 var options = new SessionOptions()
                 {
-                    MaxPlayers = 2,
+                    MaxPlayers = _maxPlayers,
                     Type = "Session",
                 }.WithDistributedAuthorityNetwork();
 

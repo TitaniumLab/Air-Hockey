@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
@@ -7,7 +8,7 @@ namespace AirHockey
     public class DistributionOfPlayers : NetworkBehaviour
     {
         [SerializeField] private Camera[] _cameras;
-        //[SerializeField] private NetworkObject _networkObject;
+        [SerializeField] private List<Transform> _spawnPoss;
         private MalletController[] _mallets = new MalletController[2];
         public static DistributionOfPlayers Instance;
 
@@ -21,7 +22,6 @@ namespace AirHockey
         {
             base.OnNetworkSpawn();
         }
-
 
         //public IMovable SpawnMovable(ulong playerId)
         //{
@@ -49,6 +49,11 @@ namespace AirHockey
             {
                 cam.gameObject.SetActive(false);
             }
+        }
+
+        public Vector3 GetSpawnPosition(ulong playerId)
+        {
+            return _spawnPoss[(int)playerId - 1].position;
         }
     }
 }

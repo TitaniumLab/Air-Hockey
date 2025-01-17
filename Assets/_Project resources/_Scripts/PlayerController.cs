@@ -1,4 +1,3 @@
-using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -33,7 +32,8 @@ namespace AirHockey
             if (IsOwner)
             {
                 var sessionOwner = NetworkManager.CurrentSessionOwner;
-                var netObj = Instantiate(_malletPrefab);
+                var pos = DistributionOfPlayers.Instance.GetSpawnPosition(OwnerClientId);
+                var netObj = Instantiate(_malletPrefab, pos, Quaternion.identity);
                 netObj.Spawn();
                 _movable = netObj.GetComponent<IMovable>();
                 if (sessionOwner != OwnerClientId)
@@ -65,14 +65,30 @@ namespace AirHockey
 
         public void OnMove(InputAction.CallbackContext context)
         {
-            if (context.started)
+            switch (context.phase)
             {
-                _isMoving = true;
+                case InputActionPhase.Started:
+                    {
+                        _movable.StartMovingRpc();
+                        _isMoving = true;
+                    }
+                    break;
+                case InputActionPhase.Canceled:
+                    {
+                        _isMoving = false;
+                        _movable.StopMovingRpc();
+                    }
+                    break;
+
             }
-            else if (context.canceled)
-            {
-                _isMoving = false;
-            }
+            //if (context.started)
+            //{
+
+            //}
+            //else if (context.canceled)
+            //{
+            //    _isMoving = false;
+            //}
         }
     }
 }

@@ -6,16 +6,21 @@ namespace AirHockey
     [RequireComponent(typeof(Rigidbody))]
     public class MalletController : NetworkBehaviour, IMovable
     {
-
         private Rigidbody _rb;
-        private float _moveSpeed = 10.0f;
-        private float _minDis = 0.1f;
+        [SerializeField] private float _moveSpeed = 10.0f;
+        [SerializeField] private float _minDis = 0.1f;
 
 
         private void Awake()
         {
-            //Debug.LogWarning(OwnerClientId);
             _rb = GetComponent<Rigidbody>();
+            _rb.isKinematic = true;
+        }
+
+        [Rpc(SendTo.Owner)]
+        public void StartMovingRpc()
+        {
+            _rb.isKinematic = false;
         }
 
         [Rpc(SendTo.Owner)]
@@ -32,9 +37,12 @@ namespace AirHockey
             }
         }
 
-        public void StopMoving()
+
+        [Rpc(SendTo.Owner)]
+        public void StopMovingRpc()
         {
             _rb.linearVelocity = Vector3.zero;
+            _rb.isKinematic = true;
         }
     }
 }
