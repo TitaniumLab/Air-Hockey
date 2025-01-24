@@ -1,59 +1,61 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace AirHockey
 {
     public class DistributionOfPlayers : NetworkBehaviour
     {
+
         [SerializeField] private Camera[] _cameras;
-        [SerializeField] private List<Transform> _spawnPoss;
-        private MalletController[] _mallets = new MalletController[2];
-        public static DistributionOfPlayers Instance;
+        //[SerializeField] private List<Transform> _spawnPoss;
+        //private MalletController[] _mallets = new MalletController[2];
+        //public static DistributionOfPlayers Instance;
 
         private void Awake()
         {
-            Instance = this;
+            Debug.Log(NetworkManager.LocalClientId);
         }
 
-
-        public override void OnNetworkSpawn()
+        public void Start()
         {
-            base.OnNetworkSpawn();
+            Debug.Log(NetworkManager.LocalClientId);
         }
 
-        //public IMovable SpawnMovable(ulong playerId)
+
+        //private void Awake()
         //{
-        //    if (IsSessionOwner)
-        //    {
-        //        var netobj = Instantiate(_networkObject);
-        //        _mallets[playerId - 1] = netobj.GetComponent<MalletController>();
-        //        netobj.Spawn();
-        //        return netobj.GetComponent<MalletController>();
-        //    }
-        //    return _mallets[playerId - 1];
+        //    Instance = this;
         //}
 
 
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            Instance = null;
-        }
+        //public override void OnNetworkSpawn()
+        //{
+        //    base.OnNetworkSpawn();
+        //}
 
 
-        public void SetCamera(ulong playerId)
-        {
-            foreach (var cam in _cameras.Except(new[] { _cameras[playerId - 1] }))
-            {
-                cam.gameObject.SetActive(false);
-            }
-        }
 
-        public Vector3 GetSpawnPosition(ulong playerId)
-        {
-            return _spawnPoss[(int)playerId - 1].position;
-        }
+        //public override void OnDestroy()
+        //{
+        //    base.OnDestroy();
+        //    Instance = null;
+        //}
+
+
+        //public void SetCamera(ulong playerId)
+        //{
+        //    foreach (var cam in _cameras.Except(new[] { _cameras[playerId - 1] }))
+        //    {
+        //        cam.gameObject.SetActive(false);
+        //    }
+        //}
+
+        //public Vector3 GetSpawnPosition(ulong playerId)
+        //{
+        //    return _spawnPoss[(int)playerId - 1].position;
+        //}
     }
 }

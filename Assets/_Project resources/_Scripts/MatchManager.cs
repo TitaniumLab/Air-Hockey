@@ -19,6 +19,7 @@ namespace AirHockey
             _matchmake = GetComponent<IMatchmake>();
             _networkManager = GetComponent<NetworkManager>();
             _matchmake.OnMatchFound += LoadGameArena;
+            SceneManager.LoadScene(_arenaSceneName, LoadSceneMode.Single);
         }
 
 
@@ -43,7 +44,7 @@ namespace AirHockey
             if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted)
             {
                 var id = _networkManager.LocalClientId;
-                DistributionOfPlayers.Instance.SetCamera(id);
+                // DistributionOfPlayers.Instance.SetCamera(id);
                 Instantiate(_playerControllerPrefab).SpawnAsPlayerObject(id);
                 Debug.Log("All members loaded to scene.");
                 _networkManager.SceneManager.OnSceneEvent -= OnArenaLoad;

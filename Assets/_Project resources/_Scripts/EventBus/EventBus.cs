@@ -8,8 +8,8 @@ namespace AirHockey
     {
         private Dictionary<string, List<object>> _eventCallbacks = new Dictionary<string, List<object>>();
 
-        private EventBus _instance;
-        public EventBus Instance
+        private static EventBus _instance;
+        public static EventBus Instance
         {
             get
             {
@@ -64,7 +64,12 @@ namespace AirHockey
         }
 
 
-        public static EventBus operator +(EventBus eventBus, Action<ISubscriber> callback) => Debug.Log;
+        public static EventBus operator +(EventBus eventBus, Action<ISubscriber> callback)
+        {
+
+            eventBus.Subscribe(callback);
+            return eventBus;
+        }
 
 
 

@@ -31,15 +31,15 @@ namespace AirHockey
         {
             if (IsOwner)
             {
-                var sessionOwner = NetworkManager.CurrentSessionOwner;
-                var pos = DistributionOfPlayers.Instance.GetSpawnPosition(OwnerClientId);
-                var netObj = Instantiate(_malletPrefab, pos, Quaternion.identity);
-                netObj.Spawn();
-                _movable = netObj.GetComponent<IMovable>();
-                if (sessionOwner != OwnerClientId)
-                {
-                    netObj.ChangeOwnership(sessionOwner); // In distributed authority SpawnWithOwnership(sessionOwner) throw exception
-                }
+                //var sessionOwner = NetworkManager.CurrentSessionOwner;
+                ////var pos = DistributionOfPlayers.Instance.GetSpawnPosition(OwnerClientId);
+                //var netObj = Instantiate(_malletPrefab, pos, Quaternion.identity);
+                //netObj.Spawn();
+                //_movable = netObj.GetComponent<IMovable>();
+                //if (sessionOwner != OwnerClientId)
+                //{
+                //    netObj.ChangeOwnership(sessionOwner); // In distributed authority SpawnWithOwnership(sessionOwner) throw exception
+                //}
             }
         }
 
