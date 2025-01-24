@@ -1,21 +1,18 @@
 using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace AirHockey
 {
-    [RequireComponent(typeof(NetworkManager))]
-    public class NetworkManagerSingleton : MonoBehaviour
+    public class NetworkManagerSingleton : NetworkManager
     {
         private void Awake()
         {
-            var manager = GetComponent<NetworkManager>();
-            if (NetworkManager.Singleton != manager)
+            // For debuging porpuses
+            if (Singleton != null && Singleton != this)
             {
-                manager.Shutdown();
                 Destroy(gameObject);
                 return;
             }
+            NetworkConfig.UseCMBService = true;
         }
     }
 }

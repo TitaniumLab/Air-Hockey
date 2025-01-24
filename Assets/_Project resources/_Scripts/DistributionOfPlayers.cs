@@ -1,22 +1,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
+
 
 namespace AirHockey
 {
     public class DistributionOfPlayers : NetworkBehaviour
     {
-
         [SerializeField] private Camera[] _cameras;
         //[SerializeField] private List<Transform> _spawnPoss;
         //private MalletController[] _mallets = new MalletController[2];
         //public static DistributionOfPlayers Instance;
 
+
+        [Inject]
+        private void Construct([InjectOptional] List<ClientData> clientDatas)
+        {
+            if (clientDatas.Count == 0)
+            {
+                Debug.Log("FFFFFFFF");
+                // spawn default
+            }
+        }
+
+
         private void Awake()
         {
-            Debug.Log(NetworkManager.LocalClientId);
+            // Debug.Log(NetworkManager.LocalClientId);
         }
 
         public void Start()

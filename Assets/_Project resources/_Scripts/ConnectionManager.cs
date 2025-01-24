@@ -7,40 +7,49 @@ using UnityEngine;
 
 namespace AirHockey
 {
-    [RequireComponent(typeof(NetworkManager))]
+    //[RequireComponent(typeof(NetworkManager))]
     public class ConnectionManager : MonoBehaviour, IMatchmake
     {
         [SerializeField] private int _maxPlayers = 2;
-        private NetworkManager _networkManager;
+        //private NetworkManager _networkManager;
         private ISession _session;
 
         public event Action OnMatchFound;
 
+
+
+
         private async void Awake()
         {
-            _networkManager = GetComponent<NetworkManager>();
-            _networkManager.NetworkConfig.UseCMBService = true;
-            _networkManager.OnClientConnectedCallback += OnClientConnectedCallback;
-            _networkManager.OnSessionOwnerPromoted += OnSessionOwnerPromoted;
+            //_networkManager = GetComponent<NetworkManager>();
+            //NetworkManager.Singleton.NetworkConfig.UseCMBService = true;
+
             await UnityServices.InitializeAsync();
+        }
+
+
+        private void Start()
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
+            NetworkManager.Singleton.OnSessionOwnerPromoted += OnSessionOwnerPromoted;
         }
 
 
         private void OnDestroy()
         {
-            if (AuthenticationService.Instance.IsSignedIn)
-            {
-                AuthenticationService.Instance.SignOut();
-                Debug.Log("Signed out successfully.");
-            }
+            //if (AuthenticationService.Instance.IsSignedIn)
+            //{
+            //    AuthenticationService.Instance.SignOut();
+            //    Debug.Log("Signed out successfully.");
+            //}
         }
 
 
         private void OnSessionOwnerPromoted(ulong sessionOwnerPromoted)
         {
-            if (_networkManager.LocalClient.IsSessionOwner)
+            if (NetworkManager.Singleton.LocalClient.IsSessionOwner)
             {
-                Debug.Log($"Client-{_networkManager.LocalClientId} is the session owner.");
+                Debug.Log($"Client-{NetworkManager.Singleton.LocalClientId} is the session owner.");
             }
         }
 
@@ -77,6 +86,7 @@ namespace AirHockey
                 }.WithDistributedAuthorityNetwork();
 
                 _session = await MultiplayerService.Instance.MatchmakeSessionAsync(quickJoinOprions, options);
+                Debug.Log(_session);
             }
             catch (Exception e)
             {

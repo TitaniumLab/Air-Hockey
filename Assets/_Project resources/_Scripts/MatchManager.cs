@@ -1,25 +1,38 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 namespace AirHockey
 {
     [RequireComponent(typeof(IMatchmake))]
-    [RequireComponent(typeof(NetworkManager))]
+    //[RequireComponent(typeof(NetworkManager))]
     public class MatchManager : MonoBehaviour
     {
         private IMatchmake _matchmake;
-        private NetworkManager _networkManager;
+        //private NetworkManager _networkManager;
+        private ZenjectSceneLoader _loader;
         [SerializeField] private string _arenaSceneName;
         [SerializeField] private NetworkObject _playerControllerPrefab;
+
+        [Inject]
+        private void Construct(ZenjectSceneLoader loader)
+        {
+            _loader = loader;
+        }
 
 
         private void Awake()
         {
             _matchmake = GetComponent<IMatchmake>();
-            _networkManager = GetComponent<NetworkManager>();
+            //_networkManager = GetComponent<NetworkManager>();
             _matchmake.OnMatchFound += LoadGameArena;
-            SceneManager.LoadScene(_arenaSceneName, LoadSceneMode.Single);
+        }
+
+        private async void Start()
+        {
+            await Awaitable.NextFrameAsync();
+            //SceneManager.LoadScene(_arenaSceneName, LoadSceneMode.Single);
         }
 
 
@@ -31,24 +44,28 @@ namespace AirHockey
 
         private void LoadGameArena()
         {
-            _networkManager.SceneManager.OnSceneEvent += OnArenaLoad;
-            if (_networkManager.LocalClient.IsSessionOwner)
+            //NetworkManager.Singleton.SceneManager.OnSceneEvent += OnArenaLoad;
+            //if (NetworkManager.Singleton.LocalClient.IsSessionOwner)
+            //{
+            //    NetworkManager.Singleton.SceneManager.LoadScene(_arenaSceneName, LoadSceneMode.Single);
+            //}
+            if (NetworkManager.Singleton.LocalClient.IsSessionOwner)
             {
-                _networkManager.SceneManager.LoadScene(_arenaSceneName, LoadSceneMode.Single);
+                _loader.LoadScene(_arenaSceneName, LoadSceneMode.Single);
             }
         }
 
 
-        private void OnArenaLoad(SceneEvent sceneEvent)
-        {
-            if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted)
-            {
-                var id = _networkManager.LocalClientId;
-                // DistributionOfPlayers.Instance.SetCamera(id);
-                Instantiate(_playerControllerPrefab).SpawnAsPlayerObject(id);
-                Debug.Log("All members loaded to scene.");
-                _networkManager.SceneManager.OnSceneEvent -= OnArenaLoad;
-            }
-        }
+        //private void OnArenaLoad(SceneEvent sceneEvent)
+        //{
+        //    if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted)
+        //    {
+        //        var id = NetworkManager.Singleton.LocalClientId;
+        //        // DistributionOfPlayers.Instance.SetCamera(id);
+        //        Instantiate(_playerControllerPrefab).SpawnAsPlayerObject(id);
+        //        Debug.Log("All members loaded to scene.");
+        //        NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnArenaLoad;
+        //    }
+        //}
     }
 }
