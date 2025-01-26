@@ -2,6 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
+using static TestInstaller;
 
 namespace AirHockey
 {
@@ -12,6 +13,7 @@ namespace AirHockey
         private IMatchmake _matchmake;
         //private NetworkManager _networkManager;
         private ZenjectSceneLoader _loader;
+
         [SerializeField] private string _arenaSceneName;
         [SerializeField] private NetworkObject _playerControllerPrefab;
 
@@ -19,6 +21,7 @@ namespace AirHockey
         private void Construct(ZenjectSceneLoader loader)
         {
             _loader = loader;
+
         }
 
 
@@ -44,15 +47,13 @@ namespace AirHockey
 
         private void LoadGameArena()
         {
+            SceneContext.ExtraBindingsInstallMethod = (container) => { container.Bind<ITickable>().To<CheckTick>().AsSingle().NonLazy(); };
             //NetworkManager.Singleton.SceneManager.OnSceneEvent += OnArenaLoad;
-            //if (NetworkManager.Singleton.LocalClient.IsSessionOwner)
-            //{
-            //    NetworkManager.Singleton.SceneManager.LoadScene(_arenaSceneName, LoadSceneMode.Single);
-            //}
             if (NetworkManager.Singleton.LocalClient.IsSessionOwner)
             {
-                _loader.LoadScene(_arenaSceneName, LoadSceneMode.Single);
+                NetworkManager.Singleton.SceneManager.LoadScene(_arenaSceneName, LoadSceneMode.Single);
             }
+
         }
 
 
