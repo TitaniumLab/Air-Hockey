@@ -2,7 +2,6 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
-using static TestInstaller;
 
 namespace AirHockey
 {
@@ -47,7 +46,7 @@ namespace AirHockey
 
         private void LoadGameArena()
         {
-            SceneContext.ExtraBindingsInstallMethod = (container) => { container.Bind<ITickable>().To<CheckTick>().AsSingle().NonLazy(); };
+            // !!!!!!!!!!!!!! SceneContext.ExtraBindingsInstallMethod = (container) => { container.Bind<ITickable>().To<CheckTick>().AsSingle().NonLazy(); };
             //NetworkManager.Singleton.SceneManager.OnSceneEvent += OnArenaLoad;
             if (NetworkManager.Singleton.LocalClient.IsSessionOwner)
             {
@@ -55,18 +54,5 @@ namespace AirHockey
             }
 
         }
-
-
-        //private void OnArenaLoad(SceneEvent sceneEvent)
-        //{
-        //    if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted)
-        //    {
-        //        var id = NetworkManager.Singleton.LocalClientId;
-        //        // DistributionOfPlayers.Instance.SetCamera(id);
-        //        Instantiate(_playerControllerPrefab).SpawnAsPlayerObject(id);
-        //        Debug.Log("All members loaded to scene.");
-        //        NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnArenaLoad;
-        //    }
-        //}
     }
 }

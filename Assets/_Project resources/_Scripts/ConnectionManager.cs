@@ -56,7 +56,7 @@ namespace AirHockey
         private void OnClientConnectedCallback(ulong clientId)
         {
             Debug.Log($"Client-{clientId} connected.");
-            if (_session != null && _session.MaxPlayers == (int)clientId)
+            if (/*_session != null &&*/ _session.MaxPlayers == (int)clientId)
             {
                 OnMatchFound?.Invoke();
             }

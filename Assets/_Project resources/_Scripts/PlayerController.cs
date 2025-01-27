@@ -1,6 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace AirHockey
 {
@@ -15,20 +16,22 @@ namespace AirHockey
         private void Awake()
         {
             _playerInput = GetComponent<PlayerInput>();
-            _playerInput.enabled = false;
+
         }
 
 
         public override void OnNetworkSpawn()
         {
-            _playerInput.enabled = IsOwner;
 
+            Debug.Log(IsOwner);
             base.OnNetworkSpawn();
         }
 
 
         private void Start()
         {
+            _playerInput.enabled = IsOwner;
+            Debug.Log(IsOwner);
             if (IsOwner)
             {
                 //var sessionOwner = NetworkManager.CurrentSessionOwner;
@@ -41,6 +44,11 @@ namespace AirHockey
                 //    netObj.ChangeOwnership(sessionOwner); // In distributed authority SpawnWithOwnership(sessionOwner) throw exception
                 //}
             }
+        }
+
+        public void Init(IMovable movable)
+        {
+            _movable = movable;
         }
 
 
@@ -59,6 +67,7 @@ namespace AirHockey
                 _plane.Raycast(ray, out float dis);
                 var point = ray.GetPoint(dis);
                 _movable.MoveToRpc(point);
+                Debug.Log("CLick");
             }
         }
 

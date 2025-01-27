@@ -20,8 +20,6 @@ namespace AirHockey
         {
             if (clientDatas.Count == 0)
             {
-                Debug.Log("FFFFFFFF");
-                // spawn default
             }
         }
 
@@ -33,7 +31,6 @@ namespace AirHockey
 
         public void Start()
         {
-            Debug.Log(NetworkManager.LocalClientId);
         }
 
 
