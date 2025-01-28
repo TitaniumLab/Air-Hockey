@@ -11,21 +11,24 @@ namespace AirHockey
         public MovableFactory(NetworkObject networkObject)
         {
             _movableObj = networkObject;
-            Debug.Log("MovableFactory");
         }
 
-        public IMovable Create()
+        public MalletController Create()
         {
             var obj = GameObject.Instantiate(_movableObj);
-            if (!obj.TryGetComponent(out IMovable component))
+
+            if (!obj.TryGetComponent(out MalletController component))
             {
                 component = obj.AddComponent<MalletController>();
             }
-            var owner = NetworkManager.Singleton.CurrentSessionOwner;
-            if (NetworkManager.Singleton.didStart)
+
+
+            if (NetworkManager.Singleton.IsApproved)
             {
                 obj.Spawn();
             }
+
+            var owner = NetworkManager.Singleton.CurrentSessionOwner;
             // In distributed authority SpawnWithOwnership(sessionOwner) throw exception
             if (NetworkManager.Singleton.LocalClientId != owner)
             {

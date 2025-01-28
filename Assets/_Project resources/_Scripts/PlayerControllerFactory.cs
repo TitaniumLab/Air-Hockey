@@ -7,13 +7,10 @@ namespace AirHockey
     public class PlayerControllerFactory
     {
         private NetworkObject _playerController;
-        private MovableFactory _movableFactory;
 
-        public PlayerControllerFactory(NetworkObject playerController, MovableFactory malletFactory)
+        public PlayerControllerFactory(NetworkObject playerController)
         {
             _playerController = playerController;
-            _movableFactory = malletFactory;
-            Debug.Log("PlayerControllerFactory");
         }
 
 
@@ -21,19 +18,21 @@ namespace AirHockey
         {
             var id = NetworkManager.Singleton.LocalClientId;
             var obj = GameObject.Instantiate(_playerController);
-            if (!obj.TryGetComponent(out PlayerController playerController))
-            {
-                playerController = obj.AddComponent<PlayerController>();
-            }
-            IMovable movable = _movableFactory.Create();
-            playerController.Init(movable);
+
             if (!obj.TryGetComponent(out PlayerController controller))
             {
-                obj.AddComponent<PlayerController>();
+                controller = obj.AddComponent<PlayerController>();
             }
-            if (NetworkManager.Singleton.didStart)
+
+            // Allows to debug without starting network
+            if (NetworkManager.Singleton.IsApproved)
             {
                 obj.SpawnAsPlayerObject(id);
+                Debug.Log($"{nameof(PlayerController)} created as {nameof(NetworkObject)} of client-{id}");
+            }
+            else
+            {
+                Debug.Log($"{nameof(PlayerController)} created as local");
             }
 
             return controller;

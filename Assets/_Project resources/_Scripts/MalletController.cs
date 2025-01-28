@@ -4,9 +4,11 @@ using UnityEngine;
 namespace AirHockey
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class MalletController : NetworkBehaviour, IMovable
+    public class MalletController : NetworkBehaviour
     {
         private Rigidbody _rb;
+        private IMovementController _controller;
+        private bool _isLocalGame;
         [SerializeField] private float _moveSpeed = 10.0f;
         [SerializeField] private float _minDis = 0.1f;
 
@@ -17,14 +19,49 @@ namespace AirHockey
             _rb.isKinematic = true;
         }
 
-        [Rpc(SendTo.Owner)]
-        public void StartMovingRpc()
+
+        public void Init(IMovementController controller)
+        {
+            _controller = controller;
+            _isLocalGame = !NetworkManager.Singleton.IsApproved;
+            if (_isLocalGame)
+            {
+                _controller.OnStartMoving += StartMoving;
+                _controller.OnMoveTo += MoveTo;
+                _controller.OnStopMoving += StopMoving;
+            }
+            else
+            {
+                _controller.OnStartMoving += StartMovingRpc;
+                _controller.OnMoveTo += MoveToRpc;
+                _controller.OnStopMoving += StopMovingRpc;
+            }
+        }
+
+
+        public override void OnDestroy()
+        {
+            if (_controller != null)
+            {
+                _controller.OnStartMoving -= StartMoving;
+                _controller.OnMoveTo -= MoveTo;
+                _controller.OnStopMoving -= StopMoving;
+
+                _controller.OnStartMoving -= StartMovingRpc;
+                _controller.OnMoveTo -= MoveToRpc;
+                _controller.OnStopMoving -= StopMovingRpc;
+            }
+        }
+
+
+        #region Movement
+        public void StartMoving()
         {
             _rb.isKinematic = false;
         }
 
-        [Rpc(SendTo.Owner)]
-        public void MoveToRpc(Vector3 point)
+
+        public void MoveTo(Vector3 point)
         {
             var direction = point - transform.position;
             if (direction.magnitude > _minDis)
@@ -38,11 +75,34 @@ namespace AirHockey
         }
 
 
-        [Rpc(SendTo.Owner)]
-        public void StopMovingRpc()
+        public void StopMoving()
         {
             _rb.linearVelocity = Vector3.zero;
             _rb.isKinematic = true;
         }
+        #endregion
+
+
+        #region RpcMovement
+        [Rpc(SendTo.Owner)]
+        public void StartMovingRpc()
+        {
+            StartMoving();
+        }
+
+
+        [Rpc(SendTo.Owner)]
+        public void MoveToRpc(Vector3 point)
+        {
+            MoveTo(point);
+        }
+
+
+        [Rpc(SendTo.Owner)]
+        public void StopMovingRpc()
+        {
+            StopMoving();
+        }
+        #endregion
     }
 }

@@ -13,6 +13,7 @@ public class SpawnerInstaller : MonoInstaller
     {
         Container.Bind<MovableFactory>().AsSingle().WithArguments(_malletPrefab);
         Container.Bind<PlayerControllerFactory>().AsSingle().WithArguments(_playerController);
+        Container.Bind<PlayerFactory>().AsSingle();
         Container.Bind<IInitializable>().To<PlayerSpawner>().AsSingle();
     }
 }

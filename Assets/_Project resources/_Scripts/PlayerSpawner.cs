@@ -5,19 +5,18 @@ namespace AirHockey
 {
     public class PlayerSpawner : IInitializable
     {
-        private PlayerControllerFactory _factory;
+        private PlayerFactory _factory;
 
 
-        public PlayerSpawner(PlayerControllerFactory factory)
+        public PlayerSpawner(PlayerFactory factory)
         {
             _factory = factory;
-            Debug.Log("Spawner");
         }
+
 
         public void Initialize()
         {
-            _factory.Create();
-            Debug.Log("init");
+            _factory.Create(Vector3.zero);
         }
     }
 }

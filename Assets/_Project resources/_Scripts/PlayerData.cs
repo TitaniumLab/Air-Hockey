@@ -3,10 +3,14 @@ using UnityEngine;
 
 namespace AirHockey
 {
-    [Serializable]
     public class PlayerData
     {
-        [field: SerializeField] public int TeamIndex;
+        public int TeamIndex { get; }
+
+        PlayerData(int teamIndex)
+        {
+            TeamIndex = teamIndex;
+        }
         // [field: SerializeField] public int SkinId;
     }
 }
