@@ -16,7 +16,6 @@ namespace AirHockey
 
         public PlayerController Create()
         {
-            var id = NetworkManager.Singleton.LocalClientId;
             var obj = GameObject.Instantiate(_playerController);
 
             if (!obj.TryGetComponent(out PlayerController controller))
@@ -25,8 +24,9 @@ namespace AirHockey
             }
 
             // Allows to debug without starting network
-            if (NetworkManager.Singleton.IsApproved)
+            if (NetworkManager.Singleton != null)
             {
+                var id = NetworkManager.Singleton.LocalClientId;
                 obj.SpawnAsPlayerObject(id);
                 Debug.Log($"{nameof(PlayerController)} created as {nameof(NetworkObject)} of client-{id}");
             }

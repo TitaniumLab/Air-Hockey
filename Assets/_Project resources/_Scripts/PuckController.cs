@@ -25,16 +25,13 @@ namespace AirHockey
             if (IsSessionOwner)
             {
                 _rb.linearVelocity = Vector3.zero;
-                NetworkObject.Despawn();
-
             }
-
         }
 
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (IsOwner || !NetworkManager.IsApproved)
+            if (IsOwner || NetworkManager == null)
             {
                 var newVel = collision.relativeVelocity.magnitude * _velocityDamping;
                 newVel = math.clamp(newVel, _minSpeed, _maxSpeed);

@@ -23,7 +23,7 @@ namespace AirHockey
         public void Init(IMovementController controller)
         {
             _controller = controller;
-            _isLocalGame = !NetworkManager.Singleton.IsApproved;
+            _isLocalGame = NetworkManager.Singleton == null;
             if (_isLocalGame)
             {
                 _controller.OnStartMoving += StartMoving;

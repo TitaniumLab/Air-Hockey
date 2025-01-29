@@ -19,7 +19,7 @@ namespace AirHockey
         private void Start()
         {
             var playerInput = GetComponent<PlayerInput>();
-            playerInput.enabled = IsOwner || !NetworkManager.Singleton.IsApproved;
+            playerInput.enabled = IsOwner || NetworkManager.Singleton == null;
         }
 
 

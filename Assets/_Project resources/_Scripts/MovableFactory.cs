@@ -22,17 +22,14 @@ namespace AirHockey
                 component = obj.AddComponent<MalletController>();
             }
 
-
-            if (NetworkManager.Singleton.IsApproved)
+            if (NetworkManager.Singleton != null)
             {
                 obj.Spawn();
-            }
-
-            var owner = NetworkManager.Singleton.CurrentSessionOwner;
-            // In distributed authority SpawnWithOwnership(sessionOwner) throw exception
-            if (NetworkManager.Singleton.LocalClientId != owner)
-            {
-                obj.ChangeOwnership(owner);
+                // In distributed authority SpawnWithOwnership(sessionOwner) throw exception
+                if (NetworkManager.Singleton.LocalClientId != NetworkManager.Singleton.CurrentSessionOwner)
+                {
+                    obj.ChangeOwnership(NetworkManager.Singleton.CurrentSessionOwner);
+                }
             }
 
             return component;

@@ -4,17 +4,15 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Multiplayer;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace AirHockey
 {
-    //[RequireComponent(typeof(NetworkManager))]
-    public class ConnectionManager : MonoBehaviour, IMatchmake
+    public class ConnectionManager : MonoBehaviour
     {
         [SerializeField] private int _maxPlayers = 2;
-        //private NetworkManager _networkManager;
         private ISession _session;
 
-        public event Action OnMatchFound;
 
 
 
@@ -22,14 +20,13 @@ namespace AirHockey
         private async void Awake()
         {
             //_networkManager = GetComponent<NetworkManager>();
-            //NetworkManager.Singleton.NetworkConfig.UseCMBService = true;
-
             await UnityServices.InitializeAsync();
         }
 
 
         private void Start()
         {
+            NetworkManager.Singleton.NetworkConfig.UseCMBService = true; // Enabled by default on distributed authority, but also throws an warning
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
             NetworkManager.Singleton.OnSessionOwnerPromoted += OnSessionOwnerPromoted;
         }
@@ -37,11 +34,8 @@ namespace AirHockey
 
         private void OnDestroy()
         {
-            //if (AuthenticationService.Instance.IsSignedIn)
-            //{
-            //    AuthenticationService.Instance.SignOut();
-            //    Debug.Log("Signed out successfully.");
-            //}
+            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
+            NetworkManager.Singleton.OnSessionOwnerPromoted -= OnSessionOwnerPromoted;
         }
 
 
@@ -58,7 +52,11 @@ namespace AirHockey
             Debug.Log($"Client-{clientId} connected.");
             if (/*_session != null &&*/ _session.MaxPlayers == (int)clientId)
             {
-                OnMatchFound?.Invoke();
+                if (NetworkManager.Singleton.LocalClient.IsSessionOwner)
+                {
+                    NetworkManager.Singleton.SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
+                }
+                //OnMatchFound?.Invoke();
             }
         }
 
@@ -93,5 +91,17 @@ namespace AirHockey
                 Debug.LogException(e);
             }
         }
+
+
+        //private void LoadGameArena()
+        //{
+        //    // !!!!!!!!!!!!!! SceneContext.ExtraBindingsInstallMethod = (container) => { container.Bind<ITickable>().To<CheckTick>().AsSingle().NonLazy(); };
+        //    //NetworkManager.Singleton.SceneManager.OnSceneEvent += OnArenaLoad;
+        //    if (NetworkManager.Singleton.LocalClient.IsSessionOwner)
+        //    {
+        //        NetworkManager.Singleton.SceneManager.LoadScene(_arenaSceneName, LoadSceneMode.Single);
+        //    }
+
+        //}
     }
 }
