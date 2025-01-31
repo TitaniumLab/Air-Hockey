@@ -8,7 +8,6 @@ namespace AirHockey
     {
         private Rigidbody _rb;
         private IMovementController _controller;
-        private bool _isLocalGame;
         [SerializeField] private float _moveSpeed = 10.0f;
         [SerializeField] private float _minDis = 0.1f;
 
@@ -23,8 +22,7 @@ namespace AirHockey
         public void Init(IMovementController controller)
         {
             _controller = controller;
-            _isLocalGame = NetworkManager.Singleton == null;
-            if (_isLocalGame)
+            if (NetworkManager.Singleton == null)
             {
                 _controller.OnStartMoving += StartMoving;
                 _controller.OnMoveTo += MoveTo;
