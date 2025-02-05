@@ -21,6 +21,7 @@ namespace AirHockey
             }
         }
 
+
         public void Subscribe(Action<ISubscriber> callback)
         {
             string key = typeof(ISubscriber).Name;
@@ -62,23 +63,5 @@ namespace AirHockey
                 }
             }
         }
-
-
-        public static EventBus operator +(EventBus eventBus, Action<ISubscriber> callback)
-        {
-
-            eventBus.Subscribe(callback);
-            return eventBus;
-        }
-
-
-
-
-
-
-
-
-
-
     }
 }

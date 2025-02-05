@@ -8,8 +8,8 @@ namespace AirHockey
 {
     public class DistributionOfPlayers : NetworkBehaviour
     {
-        [SerializeField] private Camera[] _cameras;
-        [SerializeField] private List<Transform> _spawnPoss;
+        //[SerializeField] private Camera[] _cameras;
+        //[SerializeField] private List<Transform> _spawnPoss;
 
 
         //public Vector3 GetSpawnPosition(ulong playerId)
